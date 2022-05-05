@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}StudyOn{% endblock %}
+{% block nav %}
+    <li class="breadcrumb-item active" aria-current="page">Курсы</li>
+{%endblock%}
+{% block body %}
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for course in courses %}
+            <div class="col">
+                <div class="card m-3" style="width: 35rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ course.name }}</h5>
+                        <p class="card-text">{{ course.description }}</p>
+                        <a href="{{ path('app_course_show', {'char_code': course.getCharCode()}) }}" class="card-link">Подробнее</a>
+                    </div>
+                </div>
+            </div>
+
+        {% else %}
+           <div>
+               <div>На сайте пока нет курсов!</div>
+           </div>
+        {% endfor %}
+    </div>
+    <div class="p-3">
+        <a href="{{ path('app_course_new')}}">
+            <button type="button" class="btn btn-primary">
+                Создать новый курс
+            </button>
+        </a>
+    </div>
+{% endblock %}

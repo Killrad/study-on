@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Новый урок\{{lesson.getCourse().name}}\Курсы\StudyOn{% endblock %}
+{% block nav %}
+<li class="breadcrumb-item" aria-current="page"><a href="/courses">Курсы</a></li>
+<li class="breadcrumb-item" aria-current="page">
+    <a href="{{ path('app_course_show', {'char_code': lesson.getCourse().getCharCode()}) }}">{{lesson.getCourse().name}}</a></li>
+<li class="breadcrumb-item active" aria-current="page">Новый урок</li>
+{%endblock%}
+{% block body %}
+    <h1 class="p-3">Создать новый урок</h1>
+    <div class="p-3">
+        {{ include('lesson/_form.html.twig') }}
+    </div>
+    <div class="p-3">
+        <a href="{{ path('app_course_show', {'char_code': lesson.getCourse().getCharCode()}) }}" class="btn btn-secondary">Назад к курсу</a>
+    </div>
+{% endblock %}

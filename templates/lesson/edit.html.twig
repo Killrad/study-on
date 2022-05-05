@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Редактирование\{{lesson.name}}\{{lesson.getCourse().name}}\Курсы\StudyOn{% endblock %}
+{% block nav %}
+    <li class="breadcrumb-item" aria-current="page"><a href="/courses">Курсы</a></li>
+    <li class="breadcrumb-item" aria-current="page">
+        <a href="{{ path('app_course_show', {'char_code': lesson.getCourse().getCharCode()}) }}">{{lesson.getCourse().name}}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">
+        <a href="{{ path('app_lesson_show', {'id': lesson.id}) }}">{{lesson.name}}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Редактирование</li>
+{%endblock%}
+{% block body %}
+    <h1 class="p-3">Редактировать урок</h1>
+    <div class="p-3">
+        {{ include('lesson/_form.html.twig') }}
+    </div>
+    <div class="p-3">
+        <a href="{{path('app_lesson_show', {'id':lesson.id})}}" class="btn btn-secondary">Назад</a>
+    </div>
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end p-3">
+        {{ include('lesson/_delete_form.html.twig') }}
+    </div>
+{% endblock %}

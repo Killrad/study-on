@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Новый Курс\Курсы\StudyOn{% endblock %}
+{% block nav %}
+    <li class="breadcrumb-item" aria-current="page"><a href="/courses">Курсы</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Новый курс</li>
+{%endblock%}
+{% block body %}
+    <h1 class="p-3">Новый курс</h1>
+    <div class="p-3">
+    {{ include('course/_form.html.twig') }}
+    </div>
+    <div class="p-3">
+        <a href="{{ path('app_course_index') }}" class="btn btn-secondary">
+                К списку курсов.
+        </a>
+    </div>
+{% endblock %}
