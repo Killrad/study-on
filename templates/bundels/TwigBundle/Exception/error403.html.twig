@@ -1,0 +1,14 @@
+{# templates/bundles/TwigBundle/Exception/error404.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container p-2 mt-5">
+        <div class="row m-1">
+            <div class="d-flex flex-column p-2">
+                <h1 class="text-danger">Ошибка 403</h1>
+                <h2 class="text-">У Вас нет доступа к этой странице.</h2>
+            </div>
+            <a href="{{ path('app_course_index') }}" class="btn btn-success">Главная страница</a>
+        </div>
+    </div>
+{% endblock %}

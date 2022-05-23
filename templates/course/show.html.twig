@@ -6,7 +6,7 @@
     <li class="breadcrumb-item active" aria-current="page">{{course.name}}</li>
 {%endblock%}
 {% block body %}
-    <h1 class="p-5" style="padding-bottom: 0.5rem !important;">{{ course.name }}</h1>
+    <h1 class="p-5 cn" style="padding-bottom: 0.5rem !important;">{{ course.name }}</h1>
     <p class="p-3">{{ course.description }}</p>
     <h1 class="p-5" style="padding-top: 0.5rem !important;">Уроки</h1>
 
@@ -28,7 +28,7 @@
                 К списку курсов</a>
             <a href="{{ path('app_course_edit', {'char_code': course.getCharCode()}) }}" class="btn btn-primary">
                Редактировать</a>
-            <a href="{{ path('app_course_add_lesson', {'char_code': course.getCharCode()}) }}" class="btn btn-secondary">
+            <a href="{{ path('app_course_add_lesson', {'char_code': course.getCharCode()}) }}" class="btn btn-secondary lesson-add">
                 Добавить Урок</a>
         </div>
     </div>

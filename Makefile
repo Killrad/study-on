@@ -22,10 +22,13 @@ fixtload:
 	@${CONSOLE} doctrine:fixtures:load
 
 encore_dev:
-	@${COMPOSE} run node yarn encore dev
+	@${COMPOSE} run node npm run dev
 
 encore_prod:
-	@${COMPOSE} run node yarn encore production
+	@${COMPOSE} run node npm run build
+
+phpunit:
+	@${PHP} bin/phpunit
 # В файл local.mk можно добавлять дополнительные make-команды,
 # которые требуются лично вам, но не нужны на проекте в целом
--include local.mk
+-include local.m
