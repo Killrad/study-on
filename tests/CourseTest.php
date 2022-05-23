@@ -5,33 +5,35 @@ namespace App\Tests;
 use App\DataFixtures\CoursesFixtures;
 use App\Entity\Course;
 
-class LessonTest extends AbstractTest
+class CourseTest extends AbstractTest
 {
     protected function getFixtures(): array
     {
         return [new CoursesFixtures()];
     }
-    public function testLessonPagesResponse(): void
+    public function testCoursePagesResponse(): void
     {
         $client = self::getClient();
 
         $courseRepository = self::getEntityManager()->getRepository(Course::class);
 
-        $courses = $courseRepository->findAll();
-        $lesson = $courses[1]->getLessons()[1];
+        $course = $courseRepository->findAll()[1];
 
-        $client->request('GET', '/lessons/' . $lesson->getId());
+        $client->request('GET', '/courses');
         $this->assertResponseOk();
 
-        $client->request('GET', '/lessons/' . $lesson->getId() . '/edit');
+        $client->request('GET', '/courses/' . $course->getCharCode());
         $this->assertResponseOk();
 
-        $client->request('POST', '/lessons/' . $lesson->getId() . '/edit');
+        $client->request('GET', '/courses/' . $course->getCharCode(). '/edit');
+        $this->assertResponseOk();
+
+        $client->request('POST', '/courses/' . $course->getCharCode(). '/edit');
         $this->assertResponseOk();
 
     }
 
-    public function testLessonCreation(): void
+    /*public function testLessonCreation(): void
     {
         $client = self::getClient();
 
@@ -225,5 +227,5 @@ class LessonTest extends AbstractTest
         $lessonCount = $crawler->filter('.card-subtitle')->text();
         self::assertEquals('Урок номер: 9999' , $lessonCount);
 
-    }
+    }*/
 }

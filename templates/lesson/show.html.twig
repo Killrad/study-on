@@ -14,7 +14,7 @@
             <h5 class="card-title"> {{lesson.name}}</h5>
             <h6 class="card-subtitle mb-2 text-muted">Урок номер: {{lesson.getlessonNumber()}}</h6>
             <p class="card-text">{{lesson.content}}</p>
-            <a href="{{ path('app_lesson_edit', {'id':lesson.id}) }}" class="btn btn-primary">Редактировать</a>
+            <a href="{{ path('app_lesson_edit', {'id':lesson.id}) }}" class="btn btn-primary lesson-edit">Редактировать</a>
         </div>
     </div>
     <div class="d-grid gap-2 d-md-flex justify-content-md-end p-3">

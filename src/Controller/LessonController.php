@@ -83,10 +83,11 @@ class LessonController extends AbstractController
      */
     public function delete(Request $request, Lesson $lesson, LessonRepository $lessonRepository): Response
     {
+        $course = $lesson->getCourse();
         if ($this->isCsrfTokenValid('delete'.$lesson->getId(), $request->request->get('_token'))) {
             $lessonRepository->remove($lesson);
         }
 
-        return $this->redirectToRoute('app_lesson_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('app_course_show', ['char_code' => $course->getCharCode()], Response::HTTP_SEE_OTHER);
     }
 }
