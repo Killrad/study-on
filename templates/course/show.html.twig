@@ -26,7 +26,7 @@
         <div class="btn-group" role="group" aria-label="Basic example">
             <a href="{{ path('app_course_index') }}" class="btn btn-primary">
                 К списку курсов</a>
-            <a href="{{ path('app_course_edit', {'char_code': course.getCharCode()}) }}" class="btn btn-primary">
+            <a href="{{ path('app_course_edit', {'char_code': course.getCharCode()}) }}" class="btn btn-primary edit">
                Редактировать</a>
             <a href="{{ path('app_course_add_lesson', {'char_code': course.getCharCode()}) }}" class="btn btn-secondary lesson-add">
                 Добавить Урок</a>
