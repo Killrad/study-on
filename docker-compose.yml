@@ -42,3 +42,7 @@ services:
     volumes:
       - .:/app
       - ${HOME}./yarn:/yarn
+networks:
+  default:
+    external:
+      name: study-onbilling_default

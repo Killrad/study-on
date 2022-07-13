@@ -25,7 +25,6 @@ abstract class AbstractTest extends WebTestCase
 
         // core is loaded (for tests without calling of getClient(true))
         static::$client->getKernel()->boot();
-
         return static::$client;
     }
 
