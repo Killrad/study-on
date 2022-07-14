@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Регистрация{% endblock %}
+
+{% block body%}
+    <h1 class="h3 mb-3 font-weight-normal">Регистрация</h1>
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    <li class="nav-item">
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end p-3">
+            <div class="btn-group" role="group" aria-label="Basic example">
+                <button class="btn btn-success">{{ button_label|default('Зарегистрироваться') }}</button>
+                <a type="button" class="btn btn-outline-secondary" href="{{ path('app_login') }}">Войти</a>
+            </div>
+        </div>
+    </li>
+
+    {{ form_end(form) }}
+{% endblock %}

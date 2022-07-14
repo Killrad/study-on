@@ -22,17 +22,22 @@
         <h3>Уроков пока нет!</h3>
     {%endfor%}
     </div>
+
     <div class="d-grid gap-2 d-md-flex justify-content-md-end p-3">
         <div class="btn-group" role="group" aria-label="Basic example">
             <a href="{{ path('app_course_index') }}" class="btn btn-primary">
                 К списку курсов</a>
+            {% if is_granted('ROLE_SUPER_ADMIN') %}
             <a href="{{ path('app_course_edit', {'char_code': course.getCharCode()}) }}" class="btn btn-primary edit">
                Редактировать</a>
             <a href="{{ path('app_course_add_lesson', {'char_code': course.getCharCode()}) }}" class="btn btn-secondary lesson-add">
                 Добавить Урок</a>
+            {%endif%}
         </div>
     </div>
+    {% if is_granted('ROLE_SUPER_ADMIN') %}
     <div class="p-3">
         {{ include('course/_delete_form.html.twig') }}
     </div>
+    {%endif%}
 {% endblock %}
