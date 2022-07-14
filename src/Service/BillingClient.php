@@ -3,11 +3,13 @@
 namespace App\Service;
 
 
+use App\DTO\Converter;
+use App\DTO\UserDTO;
+use App\Security\User;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use App\Exception\BillingUnavailableException;
-use App\Service\ApiManager;
 
 class BillingClient
 {
@@ -18,8 +20,9 @@ class BillingClient
         $this->serializer = $serializer;
     }
 
-    public function userLogin($credentials): ?AppUser
+    public function userLogin($credentials): ?User
     {
+
         $qm = new ApiManager(
             '/api/v1/auth',
             'POST',
@@ -35,14 +38,14 @@ class BillingClient
         }
         if (!(isset($arrayResponse['code']))) {
             $userDTO = $this->serializer->deserialize($jsonResponse, UserDTO::class, 'json');
-            return (new DTOConvertor())->fromDTO($userDTO);
+            return (new Converter())->fromDTO($userDTO);
         }
         if ($arrayResponse['code'] === Response::HTTP_UNAUTHORIZED) {
             throw new UserNotFoundException('Неверные учетные данные');
         }
     }
 
-    public function userRegister($credentialsObject): AppUser
+    public function userRegister($credentialsObject): User
     {
         $credentials = $this->serializer->serialize($credentialsObject, 'json');
         $qm = new ApiManager(
@@ -59,10 +62,10 @@ class BillingClient
             throw new BillingUnavailableException($arrayResponse['error']);
         }
         $userDTO = $this->serializer->deserialize($jsonResponse, UserDTO::class, 'json');
-        return (new DTOConvertor())->fromDTO($userDTO);
+        return (new Converter())->fromDTO($userDTO);
     }
 
-    public function getCurrentUser(AppUser $user)
+    public function getCurrentUser(User $user)
     {
         $qm = new ApiManager(
             '/api/v1/current',

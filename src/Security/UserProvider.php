@@ -8,7 +8,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
-
+use App\Service\BillingClient;
 class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
 {
     /**
@@ -22,11 +22,10 @@ class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
      */
     public function loadUserByIdentifier($identifier): UserInterface
     {
-        // Load a User object from your data source or throw UserNotFoundException.
-        // The $identifier argument may not actually be a username:
-        // it is whatever value is being returned by the getUserIdentifier()
-        // method in your User class.
-        throw new \Exception('TODO: fill in loadUserByIdentifier() inside '.__FILE__);
+        $user = new User();
+        $user->setEmail($identifier);
+        return $user;
+
     }
 
     /**
@@ -56,7 +55,7 @@ class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
 
         // Return a User object after making sure its data is "fresh".
         // Or throw a UsernameNotFoundException if the user no longer exists.
-        throw new \Exception('TODO: fill in refreshUser() inside '.__FILE__);
+        return $user;
     }
 
     /**
