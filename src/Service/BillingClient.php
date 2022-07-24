@@ -5,6 +5,7 @@ namespace App\Service;
 
 use App\DTO\Converter;
 use App\DTO\UserDTO;
+use App\Entity\Course;
 use App\Security\User;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -81,5 +82,73 @@ class BillingClient
             throw new BillingUnavailableException($arrayResponse['error']);
         }
         return $this->serializer->deserialize($jsonResponse, UserDTO::class, 'json');
+    }
+
+    public function refreshToken($refreshToken)
+    {
+        $qm = new ApiManager(
+            '/api/v1/token/refresh',
+            'POST',
+            [
+                'Content-Type: application/json',
+            ],
+            ['refresh_token' => $refreshToken],
+        );
+
+        $jsonResponse = $qm->exec();
+        $result = json_decode($jsonResponse, true, 512, JSON_PARTIAL_OUTPUT_ON_ERROR);
+
+        if (isset($result['errors'])) {
+            throw new BillingUnavailableException(json_encode($result['errors']));
+        }
+
+        return $this->serializer->deserialize($jsonResponse, 'array', 'json');
+    }
+
+    public function getCourses(){
+        $qm = new ApiManager(
+            '/api/v1/courses/',
+            'GET',
+            null
+        );
+        $jsonResponse = $qm->exec();
+
+        if (isset($result['errors'])) {
+            throw new BillingUnavailableException(json_encode($result['errors']));
+        }
+        return $this->serializer->deserialize($jsonResponse, 'array', 'json');
+    }
+
+    public function getCurrentCourse(Course $course){
+        $qm = new ApiManager(
+            '/api/v1/courses/' . $course->getCharCode(),
+            'GET',
+            null
+        );
+        $jsonResponse = $qm->exec();
+
+        if (isset($result['errors'])) {
+            throw new BillingUnavailableException(json_encode($result['errors']));
+        }
+        return $this->serializer->deserialize($jsonResponse, 'array', 'json');
+    }
+
+    public function getUserTransactions(User $user)
+    {
+        $qm = new ApiManager(
+            '/api/v1/transactions/',
+            'GET',
+            [
+                'Content-Type: application/json',
+                'Authorization: Bearer ' . $user->getApiToken()
+            ]
+        );
+        $jsonResponse = $qm->exec();
+        dd($user->getApiToken());
+        $arrayResponse = json_decode($jsonResponse, true);
+        if (isset($arrayResponse['error'])) {
+            throw new BillingUnavailableException($arrayResponse['error']);
+        }
+        return $this->serializer->deserialize($jsonResponse, 'array', 'json');
     }
 }

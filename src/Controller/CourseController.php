@@ -8,6 +8,8 @@ use App\Form\CourseType;
 use App\Form\LessonType;
 use App\Repository\CourseRepository;
 use App\Repository\LessonRepository;
+use App\Service\BillingClient;
+use mysql_xdevapi\CollectionFind;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,11 +27,27 @@ class CourseController extends AbstractController
     /**
      * @Route("/", name="app_course_index", methods={"GET"})
      */
-    public function index(CourseRepository $courseRepository): Response
+    public function index(CourseRepository $courseRepository, BillingClient $billingClient): Response
     {
+        $courses = $courseRepository->findAll();
+        $coursesView = [];
+
+        foreach ($courses as $course){
+            $courseCost = $billingClient->getCurrentCourse($course);
+            $viewCourse = [
+                'id' => $course->getId(),
+                'charcode' => $course->getCharCode(),
+                'name' => $course->getName(),
+                'description' => $course->getDescription(),
+                'type' => $courseCost['type']
+            ];
+            if ($courseCost['type'] != 'free') $viewCourse['price'] = $courseCost['price'];
+            $coursesView[] = $viewCourse;
+        }
         return $this->render('course/index.html.twig', [
-            'courses' => $courseRepository->findAll(),
+            'courses' => $coursesView,
         ]);
+
     }
 
     /**

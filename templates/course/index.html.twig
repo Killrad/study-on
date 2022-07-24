@@ -12,7 +12,16 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ course.name }}</h5>
                         <p class="card-text">{{ course.description }}</p>
-                        <a href="{{ path('app_course_show', {'char_code': course.getCharCode()}) }}" class="card-link">Подробнее</a>
+                        {% if course.type == 'free'%}
+                            <h6 class="card-subtitle mb-2 text-success">Бесплатно</h6>
+                        {%else%}
+                            {% if course.type == 'rent'%}
+                                <h6 class="card-subtitle mb-2 text-info">В аренду за {{course.price}}</h6>
+                            {%else%}
+                                <h6 class="card-subtitle mb-2 text-primary">Купить за {{course.price}}</h6>
+                            {%endif %}
+                        {%endif %}
+                        <a href="{{ path('app_course_show', {'char_code': course.charcode}) }}" class="card-link">Подробнее</a>
                     </div>
                 </div>
             </div>

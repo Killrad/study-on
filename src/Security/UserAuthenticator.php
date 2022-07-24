@@ -52,7 +52,7 @@ class UserAuthenticator extends AbstractLoginFormAuthenticator
                 try {
                     $user = $this->billingClient->userLogin($credentials);
                 } catch (BillingUnavailableException $exception) {
-                    throw new CustomUserMessageAuthenticationException ($exception->getMessage());
+                    throw new BillingUnavailableException ($exception->getMessage());
                 }
                 return $user;
             }),

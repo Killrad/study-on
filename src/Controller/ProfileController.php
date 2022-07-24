@@ -39,4 +39,28 @@ class ProfileController extends AbstractController
             'user' => $userDTO
         ]);
     }
+
+
+    /**
+     * @Route("/profile/history", name="app_profile_history")
+     * @IsGranted("ROLE_USER", statusCode=403 , message="Не авторизированный пользователь!")
+     */
+    public function history(Request $request):Response{
+
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_course_index');
+        }
+        try {
+            $userDTO = $this->billingClient->getCurrentUser($this->getUser());
+            $transactions = $this->billingClient->getUserTransactions($this->getUser());
+
+        } catch (BillingUnavailableException $e) {
+            throw new \Exception($e->getMessage());
+        }
+        dd($transactions);
+        return $this->render('profile/transaction_history.html.twig', [
+            'transactions' => $transactions,
+            'user' => $userDTO
+        ]);
+    }
 }

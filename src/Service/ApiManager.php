@@ -11,12 +11,15 @@ class ApiManager
     public function __construct(
         string $url,
         string $method,
-        array $header,
+        ?array $header,
                $parameters = null
     ) {
         $this->options = [CURLOPT_RETURNTRANSFER => true];
         $this->options[CURLOPT_URL] = $_ENV['BILLING_URL'] . $url;
-        $this->options[CURLOPT_HTTPHEADER] = $header;
+        if ($header !== null) {
+            $this->options[CURLOPT_HTTPHEADER] = [];
+            array_push($this->options[CURLOPT_HTTPHEADER], ...$header);
+        }
 
         if ($method === 'POST') {
             $this->options[CURLOPT_POST] = true;
@@ -24,6 +27,7 @@ class ApiManager
                 $this->options[CURLOPT_POSTFIELDS] = $parameters;
             }
         }
+
     }
 
     public function exec()
