@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Exception\BillingUnavailableException;
+use App\Repository\CourseRepository;
 use App\Service\BillingClient;
 use JMS\Serializer\SerializerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -45,7 +46,7 @@ class ProfileController extends AbstractController
      * @Route("/profile/history", name="app_profile_history")
      * @IsGranted("ROLE_USER", statusCode=403 , message="Не авторизированный пользователь!")
      */
-    public function history(Request $request):Response{
+    public function history(Request $request, courseRepository $courseRepository):Response{
 
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_course_index');
@@ -57,9 +58,34 @@ class ProfileController extends AbstractController
         } catch (BillingUnavailableException $e) {
             throw new \Exception($e->getMessage());
         }
-        dd($transactions);
+        $viewTransactions= [];
+        foreach ($transactions as $transaction){
+            if ($transaction['type'] == 'payment'){
+            $courseInfo = $courseRepository->findOneBy(['char_code'=>$transaction['course_code']]);
+            if ($courseInfo) {
+                $courseData = $this->billingClient->getCurrentCourse($courseInfo);
+                $viewTransaction = [
+                    'TRtype' => $transaction['type'],
+                    'course' => $courseInfo->getName(),
+                    'courseCode' => $courseInfo->getCharCode(),
+                    'type' => $courseData['type'],
+                    'created_at' => $transaction['created_at'],
+                    'value' => $transaction['ammount']
+                ];
+                }
+            }else{
+                $viewTransaction = [
+                    'TRtype' => $transaction['type'],
+                    'created_at' => $transaction['created_at'],
+                    'value' => $transaction['ammount']
+                ];
+            }
+
+            $viewTransactions[] = $viewTransaction;
+
+        }
         return $this->render('profile/transaction_history.html.twig', [
-            'transactions' => $transactions,
+            'transactions' => $viewTransactions,
             'user' => $userDTO
         ]);
     }

@@ -45,7 +45,6 @@ class UserAuthenticator extends AbstractLoginFormAuthenticator
             'username' => $username,
             'password' => $password,
         ];
-
         $credentials = json_encode($credentials);
         $passport = new SelfValidatingPassport(
             new UserBadge($credentials, function ($credentials) {

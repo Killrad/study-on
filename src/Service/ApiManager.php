@@ -27,11 +27,17 @@ class ApiManager
                 $this->options[CURLOPT_POSTFIELDS] = $parameters;
             }
         }
+        else{
+            if ($parameters !== null){
+                $this->options[CURLOPT_URL] .= '?' . http_build_query($parameters);
+            }
+        }
 
     }
 
     public function exec()
     {
+
         $ch = curl_init();
         curl_setopt_array($ch, $this->options);
         $jsonResponse = curl_exec($ch);

@@ -34,6 +34,7 @@ class BillingClient
         );
         $jsonResponse = $qm->exec();
         $arrayResponse = json_decode($jsonResponse, true, 512, JSON_PARTIAL_OUTPUT_ON_ERROR);
+        //dd($arrayResponse['token']);
         if (!(isset($arrayResponse['token']))) {
             return null;
         }
@@ -144,11 +145,51 @@ class BillingClient
             ]
         );
         $jsonResponse = $qm->exec();
-        dd($user->getApiToken());
+        //dd($user->getApiToken());
         $arrayResponse = json_decode($jsonResponse, true);
         if (isset($arrayResponse['error'])) {
             throw new BillingUnavailableException($arrayResponse['error']);
         }
         return $this->serializer->deserialize($jsonResponse, 'array', 'json');
+    }
+
+    public function getTransactions($filters, $token)
+    {
+        $api = new ApiManager(
+            '/api/v1/transactions/',
+            'GET',
+            [
+                'Accept: application/json',
+                'Authorization: Bearer ' . $token
+            ],
+            $filters
+            );
+
+        $response = $api->exec();
+        $result = json_decode($response, true);
+        if (isset($result['errors'])) {
+            throw new BillingUnavailableException(json_encode($result['errors']));
+        }
+
+        return $this->serializer->deserialize($response, 'array', 'json');
+    }
+
+    public function pay($courseCode, $token)
+    {
+        $api = new ApiManager(
+            '/api/v1/courses/' . $courseCode . '/pay',
+            'POST',
+            [
+                'Accept: application/json',
+                'Authorization: Bearer ' . $token
+            ]);
+        $response = $api->exec();
+
+        $result = json_decode($response, true);
+        if (isset($result['status_code']) && $result['status_code'] !== Response::HTTP_OK) {
+            throw new BillingUnavailableException($result['message']);
+        }
+
+        return $this->serializer->deserialize($response, 'array', 'json');
     }
 }

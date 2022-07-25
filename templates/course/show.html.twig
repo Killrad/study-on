@@ -7,6 +7,36 @@
 {%endblock%}
 {% block body %}
     <h1 class="p-5 cn" style="padding-bottom: 0.5rem !important;">{{ course.name }}</h1>
+    <div class="p-5" style="padding-bottom: 0.1rem !important; padding-top: 0.1rem !important;">
+        {% if type == 'free'%}
+            <h6 class="card-subtitle mb-2 text-success">Бесплатно</h6>
+        {%else%}
+            {% if type == 'rent'%}
+                {% if status == 'own' %}
+                    <h6 class="card-subtitle mb-2 text-info">Арендован</h6>
+                {%else%}
+                    <h6 class="card-subtitle mb-2 text-info">Арендовать за {{price}}</h6>
+                    {% if canbuy == 'yes'%}
+                        <button data-toggle="modal" data-target="#exampleModal" class="btn btn-outline-success">Арендовать</button>
+                    {% else%}
+                        <button data-toggle="modal" data-target="#exampleModal" class="btn btn-outline-dark disabled">Арендовать</button>
+                    {%endif%}
+                {%endif%}
+            {%else%}
+                {% if status == 'own' %}
+                    <h6 class="card-subtitle mb-2 text-info">Куплен</h6>
+                {%else%}
+                    <h6 class="card-subtitle mb-2 text-info">Купить за {{price}}</h6>
+                    {% if canbuy == 'yes'%}
+                        <button data-toggle="modal" data-target="#exampleModal" class="btn btn-outline-success">Купить</button>
+                    {% else%}
+                        <button data-toggle="modal" data-target="#exampleModal" class="btn btn-outline-dark disabled">Купить</button>
+                    {%endif%}
+                {%endif%}
+            {%endif %}
+        {%endif %}
+    </div>
+
     <p class="p-3">{{ course.description }}</p>
     <h1 class="p-5" style="padding-top: 0.5rem !important;">Уроки</h1>
 
@@ -40,4 +70,29 @@
         {{ include('course/_delete_form.html.twig') }}
     </div>
     {%endif%}
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Совершение оплаты.</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Вы уверены, что хотите купить этот курс?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                    <a role="button" methods="POST" href="{{ path('app_course_buy', {'char_code': course.getCharCode()}) }}" type="button" class="btn btn-primary">Подтвердить</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
 {% endblock %}
+
+
+
+

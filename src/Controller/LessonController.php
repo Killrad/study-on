@@ -5,10 +5,12 @@ namespace App\Controller;
 use App\Entity\Lesson;
 use App\Form\LessonType;
 use App\Repository\LessonRepository;
+use App\Service\BillingClient;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -49,13 +51,34 @@ class LessonController extends AbstractController
 
     /**
      * @Route("/{id}", name="app_lesson_show", methods={"GET"})
-     * @IsGranted("ROLE_USER", statusCode=403 , message="Урок не приобретён!")
      */
-    public function show(Lesson $lesson): Response
+    public function show(Lesson $lesson, BillingClient $billingClient): Response
     {
-        return $this->render('lesson/show.html.twig', [
-            'lesson' => $lesson,
-        ]);
+        $course = $lesson->getCourse();
+
+        $billingCourse = $billingClient->getCurrentCourse($course);
+
+        if ($billingCourse['type'] === 'free') {
+            return $this->render('lesson/show.html.twig', [
+                'lesson' => $lesson,
+            ]);
+        }
+
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        $apiToken = $this->getUser()->getApiToken();
+        $transaction = $billingClient->getTransactions(
+            ['type' => 'payment', 'course_code' => $course->getCharCode(), 'skip_expired' => true],
+            $apiToken
+        );
+        if ($transaction || $this->isGranted('ROLE_SUPER_ADMIN')) {
+            return $this->render('lesson/show.html.twig', [
+                'lesson' => $lesson,
+            ]);
+        }
+        throw new HttpException(Response::HTTP_NOT_ACCEPTABLE,'Данный курс вам недоступен!');
     }
 
     /**

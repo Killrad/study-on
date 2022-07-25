@@ -16,9 +16,34 @@
     <div class="example-wrapper">
        <h1>История транзакций {{user.username}}</h1>
 
-            {{for transaction in transactions}}
+            {%for transaction in transactions%}
+                <div class="card m-3" style="width: 35rem;">
+                    <div class="card-body">
+                        {%if transaction.TRtype == 'payment'%}
+                            {% if transaction.type == 'free'%}
+                                <h5 class="card-title">Курс "{{ transaction.course }}" получен бесплатно.</h5>
+                            {%else%}
+                                {% if transaction.type == 'rent'%}
+                                    <h5 class="card-title">Курс "{{ transaction.course }}" арендован.</h5>
+                                {%else%}
+                                    <h5 class="card-title">Курс "{{ transaction.course }}" куплен.</h5>
+                                {%endif %}
+                            {%endif %}
 
-            {{}}
+                        {%else%}
+                            <h5 class="card-title">Пополнение</h5>
+                        {%endif%}
+                            <p class="card-text">Сумма: {{ transaction.value }}.</p>
+                            <h6 class="card-subtitle mb-2 text-success">{{ transaction.created_at }}.</h6>
+                        {%if transaction.TRtype == 'payment'%}
+                            <a href="{{ path('app_course_show', {'char_code': transaction.courseCode}) }}" class="card-link">К курсу</a>
+                        {%endif%}
+                    </div>
+                </div>
+            {%else%}
+                <h3> Вы не совершили ни 1 транзакции! </h3>
+            {%endfor%}
         <a class="btn btn-outline-secondary" role="button" href="{{ path('app_course_index') }}">Главная</a>
+        <a class="btn btn-outline-info" role="button" href="{{ path('app_profile') }}">Назад</a>
     </div>
 {% endblock %}

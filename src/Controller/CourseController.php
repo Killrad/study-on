@@ -74,13 +74,56 @@ class CourseController extends AbstractController
     /**
      * @Route("/{char_code}", name="app_course_show", methods={"GET"})
      */
-    public function show(Course $course): Response
+    public function show(Course $course, BillingClient $billingClient): Response
     {
+        $user = $this->getUser();
+        $courseData = $billingClient->getCurrentCourse($course);
+        $price = 0.0;
+        if ($courseData['type'] != 'free') {
+            $price = $courseData['price'];
+        }
+        $status = 'not';
+        $canbuy = 'not';
+        if ($user) {
+            $apiToken = $user->getApiToken();
+            $transaction = $billingClient->getTransactions(
+            ['type' => 'payment', 'course_code' => $course->getCharCode(), 'skip_expired' => true],
+            $apiToken
+            );
+            if ($transaction) {
+                $status = 'own';
+            }
+            $currentUser = $billingClient->getCurrentUser($user);
+            //dd($currentUser);
+            if ($currentUser->getBalance() >= $price){
+                $canbuy = 'yes';
+            }
+        }
         return $this->render('course/show.html.twig', [
             'course' => $course,
+            'type' =>$courseData['type'],
+            'price' => $price,
+            'status' => $status,
+            'canbuy'=> $canbuy
         ]);
     }
 
+
+    /**
+     * @Route("/{char_code}/pay", name="app_course_buy", methods={"GET"})
+     */
+    public function buy(Course $course, BillingClient $billingClient): Response
+    {
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        $apiToken = $this->getUser()->getApiToken();
+
+        $payResponse = $billingClient->pay($course->getCharCode(), $apiToken);
+
+        return $this->redirectToRoute('app_course_index');
+    }
     /**
      * @Route("/{char_code}/edit", name="app_course_edit", methods={"GET", "POST"})
      * @IsGranted("ROLE_SUPER_ADMIN", statusCode=403 , message="Нет доступа!")
